@@ -6,9 +6,9 @@ module SwfUpload
     base.extend(ClassMethods)
   end
   module ClassMethods
+    # adds a before filter that guesses the mime type of the upload based on the file extension.
     def responds_to_swf_upload( options = {} )
       self.class_eval do
-        #session( { :cookie_only => false }.merge(options) )
         before_filter :guess_mime_type, options
         
         private
@@ -17,7 +17,7 @@ module SwfUpload
           file_data = params['Filedata']
           if file_data && file_data.content_type == 'application/octet-stream'
             file_data.content_type = MIME::Types.type_for(file_data.original_filename)
-            params['Filedata'] = file_data # NOTE - is this needed?
+            params['Filedata'] = file_data
           end
         end
       end
