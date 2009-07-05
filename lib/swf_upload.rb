@@ -1,4 +1,9 @@
 require 'rack/utils'
+if defined? MIME::Types
+  require 'mime/types'
+else
+  puts 'swf_upload needs the mime-types gem.'
+end
 
 module SwfUpload
   # When this module is included, extend it with the available class methods
