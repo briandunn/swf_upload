@@ -15,26 +15,20 @@ describe SwfUploadHelper do
     before do
       helper.output_buffer = '' # wouldn't empty string make a good default?
       helper.instance_variable_set(:@template, helper ) # i probably shouldn't have to do this.
-      helper.send(:session).session_id = '12345'
-      helper.should_receive(:request).and_return( @session_options = mock('session options'))
+      helper.should_receive(:request).and_return( @request = mock('request'))
+      @session_key = ActionController::Base.session_options[:key] 
+      @request.should_receive(:cookies).and_return( { @session_key => '12345'} )
     end
     describe "establish session through url" do
       it "should append the session key and session id to the upload_url and pass it to the js method call" do
-        @session_options.should_receive(:session_options).and_return( {} )
         helper.swf_upload_tag( 'upload_url' ) do
           "hi mom"
-        end.should match( /upload_url\?_session_id=12345/ )
-      end
-      it "should append the custom session key" do
-        @session_options.should_receive(:session_options).and_return( {:session_key => 'custom_key'} )
-        helper.swf_upload_tag( 'upload_url' ) do
-          "hi mom"
-        end.should match( /upload_url\?custom_key=12345/ )
+        end.should match( /upload_url\?#{@session_key}=12345/ )
       end
     end
     describe "protecting against forgery" do 
       before do
-        @session_options.stub!(:session_options => {})
+        @request.stub!(:session_options => {})
         helper.stub!( :form_authenticity_token => 'secret_token' )
       end
       describe "when protecting" do
@@ -59,7 +53,7 @@ describe SwfUploadHelper do
     end
     describe "button_placeholder_id" do
       before do
-        @session_options.stub!(:session_options => {})
+        @request.stub!(:session_options => {})
         helper.stub!( :form_authenticity_token => 'secret_token' )
       end
       it "should add a div to hold the place of the button with an id of browse_files by default" do
@@ -77,7 +71,7 @@ describe SwfUploadHelper do
 
     describe "button test" do
       it "should be the content of the capture" do
-        @session_options.stub!(:session_options => {})
+        @request.stub!(:session_options => {})
         out = helper.swf_upload_tag( '/', :button_placeholder_id => 'a_button_placeholder' ) do 
           "hello?"
         end
