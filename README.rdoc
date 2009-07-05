@@ -16,6 +16,8 @@ This plugin includes the progress bar and queue exemplified here: http://demo.sw
 * git submodule add git://github.com/briandunn/swf_upload.git vendor/plugins/swf_upload
 * Download the latest files ( http://github.com/briandunn/swf_upload/tarball/master ) and extract to vendor/plugins/swf_upload
 
+swf_upload depends on the mime-types gem to get arround the MIME type known issue: http://demo.swfupload.org/Documentation/#knownissues
+
 === Step 2
 
  script/generate swf_upload
